@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var location: ArrayList<Coord>
     private lateinit var weather: Weather
     private lateinit var forecast: Forecast
-    // private lateinit var viewModel: MainActivityViewModel
+//    private lateinit var viewModel: MainActivityViewModel
 
     private val typeConverter = Helpers()
 
@@ -57,11 +57,15 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 //        viewModel = ViewModelProvider(this,
 //            MainActivityViewModelFactory(WeatherRepository()))[MainActivityViewModel::class.java]
 
+        // Loads the Lottie thing screen
         loadSplashScreen()
 
+        // Sets the array list for the recyclerview for 5 - day weather forecast
         forecastData = arrayListOf()
         adapter = FiveDayForecastAdapter(forecastData, this)
 
+        // Queries the selected location using the name, latitude, and longitude
+        // Uses Coord model as a guide
         location = arrayListOf(
             Coord("Angeles City", 15.1463554, 120.5245999),
             Coord("Tarlac City", 15.489, 120.599),
@@ -70,6 +74,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             Coord("Surigao City", 9.750, 125.500)
         )
 
+        // Loads the array list and feeds them into the spinner / dropdown list
         val cityListSpinner = arrayOf(
             "Angeles City, Pampanga",
             "Tarlac City, Tarlac",
@@ -80,13 +85,15 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding.locationSpinner.adapter = spinnerAdapter
         binding.locationSpinner.onItemSelectedListener = this
 
+        // Loads the recyclerview to be able to load them after creating the view
+        // It loads horizontally, otherwise it will be no good when loaded vertically
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         with(binding) {
             rvForecast.layoutManager = layoutManager
             rvForecast.adapter = adapter
         }
 
-
+        // Disabled since the group has decided not to use viewModels
 //        lifecycleScope.launch {
 //            viewModel.weatherVMState.collect{
 //                when(it){
@@ -108,6 +115,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 //        }
     }
 
+    // Loads the data for the current weather and 5 - day weather forecast for the selected location
     private fun weatherData(lat: Double, lon: Double, locationName: String) {
         val forecastInitiate = RetrofitHelper.getInstance().create(WeatherForecast::class.java)
         val weatherInitiate = RetrofitHelper.getInstance().create(CurrentWeather::class.java)
@@ -118,6 +126,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             val weatherDataExtras = resultWeather.body()
             val weatherData = resultForecast.body()
 
+            // Loads the 5 - day forecast for the recyclerview
             if (weatherData != null) {
                 forecast = weatherData.list[0]
                 forecastData.clear()
@@ -134,38 +143,73 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 }
             }
 
+            // Loads the current weather forecast for the selected location
             with(binding) {
+                // Loads the data for the first card
+                // Important details like weather type, time and date, and "feels like" temperature
                 txtWeatherType.text = String.format("%s", weatherDataExtras?.weather?.get(0)?.main.toString())
+                txtFeelsTemp.text = String.format("Feels like %s\u2103",  weatherDataExtras?.main?.feels_like.toString())
                 txtDateTime.text = String.format("%s | %s",
                     weatherDataExtras?.dt?.let { typeConverter.getDay(it.toLong()) },
                     weatherDataExtras?.dt?.let { typeConverter.getTime(it.toLong()) })
+
+                // Loads the secondary three cards for the temperature
+                // Details like current temperature, minimum temperature, and max temperature
                 txtTemp.text = String.format("%s\u2103", weatherDataExtras?.main?.temp.toString())
                 txtMinTemp.text = String.format("%s\u2103",  weatherDataExtras?.main?.temp_min.toString())
                 txtMaxTemp.text = String.format("%s\u2103",  weatherDataExtras?.main?.temp_max.toString())
-                txtFeelsTemp.text = String.format("Feels like %s\u2103",  weatherDataExtras?.main?.feels_like.toString())
 
+                // Sets the intent or the passing of the data from this MainActivity to WeatherInfoFull screen
+                // This passes two objects at once: selected location name and its weather information details
                 btnShowMore.setOnClickListener {
                     var intent = Intent(this@MainActivity, WeatherInfoFull::class.java)
                     intent.putExtra("locationName", locationName)
                     intent.putExtra("itemData", weatherDataExtras)
                     startActivity(intent)
                 }
+
+                // Set image for the current temperature
+                if (weatherDataExtras?.main?.temp.toString().toDouble() <= 35.00) {
+                    imgCurrentTempPlace.setImageResource(com.mariejuana.openweatherapi.R.drawable.cold_temp)
+                } else {
+                    imgCurrentTempPlace.setImageResource(com.mariejuana.openweatherapi.R.drawable.hot_temp)
+                }
+
+                // Set image for the minimum temperature
+                if (weatherDataExtras?.main?.temp_min.toString().toDouble() <= 35.00) {
+                    imgTempMinPlace.setImageResource(com.mariejuana.openweatherapi.R.drawable.cold_temp)
+                } else {
+                    imgTempMinPlace.setImageResource(com.mariejuana.openweatherapi.R.drawable.hot_temp)
+                }
+
+                // Set image for the maximum temperature
+                if (weatherDataExtras?.main?.temp_max.toString().toDouble() <= 35.00) {
+                    imgTempMaxPlace.setImageResource(com.mariejuana.openweatherapi.R.drawable.cold_temp)
+                } else {
+                    imgTempMaxPlace.setImageResource(com.mariejuana.openweatherapi.R.drawable.hot_temp)
+                }
             }
         }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        // Gets the position and the name of the selected position
         val location = location[position]
         val locationName = parent?.getItemAtPosition(position).toString()
+
+        // Passes the said information to the weatherData function in order to feed it two combined APIs
         location.lat?.let { location.lon?.let { it1 -> weatherData(it, it1, locationName) } }
 
+        // Saves temporarily the location name in the memory
+        // Used to access to different parts of the app
         SharedData.locationName = locationName
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-        // Nothing to do.. literally
+        // Nothing to do.. literally. Just nothing
     }
 
+    // Loads the Lottie thing
     private fun loadSplashScreen() {
         binding.animationView.isVisible = true
         object : CountDownTimer(3000, 1000) {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class MainActivityViewModel(private var weatherRepository: WeatherRepository): ViewModel() {
     val weatherVMState: MutableStateFlow<StateAPI> = MutableStateFlow(StateAPI.Empty)
 
-    fun getCurrentWeather(lat: Double, lon: Double) = viewModelScope.launch(Dispatchers.IO) {
+    fun weatherData(lat: Double, lon: Double, locationName: String) = viewModelScope.launch(Dispatchers.IO) {
         weatherVMState.value = StateAPI.Loading
         weatherRepository.getCurrentWeather(lat,lon)
             .catch { e ->

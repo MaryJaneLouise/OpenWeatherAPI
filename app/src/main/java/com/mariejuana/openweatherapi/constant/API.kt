@@ -6,5 +6,4 @@ object API {
     const val CURRENT_WEATHER = "/data/2.5/weather"
     const val CURRENT_FORECAST = "/data/2.5/forecast"
     const val BASE_WEATHER_IMG_URL = "https://openweathermap.org/img/wn/"
-    const val CITY = "CITY_NAME"
 }

@@ -13,6 +13,7 @@ import com.mariejuana.openweatherapi.models.Forecast
 import com.mariejuana.openweatherapi.databinding.ContentForecastRvBinding
 import com.mariejuana.openweatherapi.helpers.Helpers
 import com.mariejuana.openweatherapi.helpers.SharedData
+import com.mariejuana.openweatherapi.R
 import java.io.Serializable
 
 
@@ -20,7 +21,7 @@ class FiveDayForecastAdapter (private var forecastList: ArrayList<Forecast>, pri
     private val typeConverter = Helpers()
 
     inner class ForecastViewHolder(private val binding: ContentForecastRvBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(itemData: Forecast, ) {
+        fun bind(itemData: Forecast) {
             val currentWeather = itemData.weather[0]
             val currentLocation = SharedData.locationName
 
