@@ -1,15 +1,18 @@
 package com.mariejuana.openweatherapi.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.mariejuana.openweatherapi.screens.WeatherInfoFull
 import com.mariejuana.openweatherapi.constant.API
 import com.mariejuana.openweatherapi.models.Forecast
 import com.mariejuana.openweatherapi.databinding.ContentForecastRvBinding
 import com.mariejuana.openweatherapi.helpers.Helpers
+import com.mariejuana.openweatherapi.helpers.SharedData
 import java.io.Serializable
 
 
@@ -17,14 +20,22 @@ class FiveDayForecastAdapter (private var forecastList: ArrayList<Forecast>, pri
     private val typeConverter = Helpers()
 
     inner class ForecastViewHolder(private val binding: ContentForecastRvBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(itemData: Forecast) {
+        fun bind(itemData: Forecast, ) {
             val currentWeather = itemData.weather[0]
+            val currentLocation = SharedData.locationName
 
             with(binding) {
                 txtDay.text = itemData.dt?.let { typeConverter.getDay(it.toLong()) }
                 txtTime.text = itemData.dt?.let { typeConverter.getTime(it.toLong()) }
-                txtTemp.text = String.format("%s\u2103",itemData.main.temp)
+                txtTemp.text = String.format("%s\u2103", itemData.main.temp.toString())
                 txtForecast.text = currentWeather.main
+
+                weatherForecast.setOnClickListener {
+                    var intent = Intent(context, WeatherInfoFull::class.java)
+                    intent.putExtra("itemData", itemData)
+                    intent.putExtra("locationName", currentLocation)
+                    context.startActivity(intent)
+                }
             }
 
             Glide.with(context)

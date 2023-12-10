@@ -4,10 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/weather_forecast"
-    android:layout_width="100dp"
-    android:layout_height="150dp"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp"
+    android:layout_width="145dp"
+    android:layout_height="215dp"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
@@ -15,44 +13,79 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="10dp"
-        app:cardElevation="5dp">
+        app:cardElevation="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/txt_day"
+            <LinearLayout
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:id="@+id/layout_day"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Monday"
-                android:textAlignment="center"/>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/txt_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Monday"
+                    android:textAlignment="center"/>
+            </LinearLayout>
+
 
             <ImageView
                 android:id="@+id/img_weather"
                 android:layout_width="match_parent"
-                android:layout_height="65dp"
+                android:layout_height="85dp"
                 android:layout_marginStart="0dp"/>
 
-            <TextView
-                android:id="@+id/txt_time"
+            <LinearLayout
+                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="12:00 AM"
-                android:textAlignment="center"/>
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/txt_forecast"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cloudy"
+                        android:textAlignment="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/txt_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="12:00 AM"
+                        android:textAlignment="center"/>
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/txt_temp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="30 deg"
-                android:textAlignment="center"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/txt_temp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="30 deg"
+                        android:textAlignment="center"/>
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/txt_forecast"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cloudy"
-                android:textAlignment="center"/>
+
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
