@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var location: ArrayList<Coord>
     private lateinit var weather: Weather
     private lateinit var forecast: Forecast
-//    private lateinit var viewModel: MainActivityViewModel
+    private lateinit var viewModel: MainActivityViewModel
 
     private val typeConverter = Helpers()
 
@@ -54,11 +54,12 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        viewModel = ViewModelProvider(this,
-//            MainActivityViewModelFactory(WeatherRepository()))[MainActivityViewModel::class.java]
+        viewModel = ViewModelProvider(this,
+            MainActivityViewModelFactory(WeatherRepository()))[MainActivityViewModel::class.java]
 
-        // Loads the Lottie thing screen
-        loadSplashScreen()
+        // Loads the test location into the API then loads the result to the API
+        viewModel.weatherData(15.1463554,120.5245999)
+        binding.mainScreen.visibility = View.GONE
 
         // Sets the array list for the recyclerview for 5 - day weather forecast
         forecastData = arrayListOf()
@@ -93,26 +94,27 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             rvForecast.adapter = adapter
         }
 
-        // Disabled since the group has decided not to use viewModels
-//        lifecycleScope.launch {
-//            viewModel.weatherVMState.collect{
-//                when(it){
-//                    is StateAPI.Loading ->{
-//                        binding.animationView.visibility = View.VISIBLE
-//                    }
-//                    is StateAPI.Success ->{
-//                        binding.animationView.visibility = View.GONE
-//                    }
-//                    is StateAPI.Failure ->{
-//                        it.e.printStackTrace()
-//                    }
-//                    is StateAPI.Empty ->{
-//                        binding.cardWeather.visibility = View.GONE
-//                        binding.animationView.visibility = View.VISIBLE
-//                    }
-//                }
-//            }
-//        }
+        // This will check if the device doesn't have any internet, thus looping the Lottie thing
+        lifecycleScope.launch {
+            viewModel.weatherVMState.collect{
+                when(it){
+                    is StateAPI.Loading ->{
+                        binding.animationView.visibility = View.VISIBLE
+                    }
+                    is StateAPI.Success ->{
+                        binding.animationView.visibility = View.GONE
+                        binding.mainScreen.visibility = View.VISIBLE
+                    }
+                    is StateAPI.Failure ->{
+                        it.e.printStackTrace()
+                    }
+                    is StateAPI.Empty ->{
+                        binding.animationView.visibility = View.VISIBLE
+                        binding.mainScreen.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
     // Loads the data for the current weather and 5 - day weather forecast for the selected location
@@ -207,19 +209,5 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         // Nothing to do.. literally. Just nothing
-    }
-
-    // Loads the Lottie thing
-    private fun loadSplashScreen() {
-        binding.animationView.isVisible = true
-        object : CountDownTimer(3000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                // Nothing to do.. literally
-            }
-
-            override fun onFinish() {
-                binding.animationView.isVisible = false
-            }
-        }.start()
     }
 }
